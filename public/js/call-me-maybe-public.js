@@ -39,16 +39,11 @@
 			data : form_data,
 			success : function( response ) {
 				console.log(response);
-				jQuery( 'form[name="callback_form"]' ).append('<div class="success">' + response.data + '</div>');
-				jQuery(':input','form[name="callback_form"]')
-					.not(':button, :submit, :reset, :hidden')
-					.val('')
-					.prop('checked', false)
-					.prop('selected', false);
+				jQuery( 'form[name="callback_form"]' ).html('<div class="success">' + response.data + '</div>');
 			},
 			fail : function( err ) {
-				console.log(response);
-				jQuery( 'form[name="callback_form"]' ).append('<div class="error">' + response.data + '</div>');
+				console.log(err);
+				jQuery( 'form[name="callback_form"]' ).html('<div class="error">' + err.data + '</div>');
 			}
 		});
 

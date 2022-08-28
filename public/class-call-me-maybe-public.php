@@ -78,7 +78,7 @@ class Call_Me_Maybe_Public {
 				    </div>
 				    <div class="form-field">    
 				        <label>Date: </label>
-				        <input name="date"  type="date" required>
+				        <input name="date" min="'. date('Y-m-d').'" type="date" required>
 				    </div>
 				    <input type="hidden" name="action" value="send_enquiry" style="display: none; visibility: hidden; opacity: 0;">
 				    <button class="button" type="submit">Call me back!</button>

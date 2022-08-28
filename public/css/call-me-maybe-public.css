@@ -224,6 +224,24 @@ select {
     width: 100%;
 }
 
+.success{
+    text-align: center;
+    background: #b1e488;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.error{
+    text-align: center;
+    background: #b64343;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
 input[type='color']:focus,
 input[type='date']:focus,
 input[type='datetime']:focus,

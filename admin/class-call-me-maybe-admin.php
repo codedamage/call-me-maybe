@@ -107,20 +107,17 @@ class Call_Me_Maybe_Admin {
         $name = sanitize_text_field($data['name']);
 	    $email = sanitize_text_field($data['email']);
 	    $phone= sanitize_text_field($data['phone']);
-	    $date = date( 'Y-m-d H:i:s', $data['date'] );
+	    $date = date( 'Y-m-d H:i:s', strtotime($data['date']) );
 
-        $query = $wpdb->prepare(
-	        "INSERT INTO $enquiries ( name, email, phone, date ) VALUES ( %s, %s, %s )",
-	        array(
-		        $name,
-		        $email,
-		        $phone,
-		        $date
-	        )
-        );
+	    $query = $wpdb->insert($enquiries, array(
+		    'name' => $name,
+		    'email' => $email,
+		    'phone' => $phone,
+		    'date' => $date,
+		    'created_at' => date('Y-m-d H:i:s')
+	    ));
 
-	    if ( $query) {
-		    $wpdb->query($query);
+	    if ( $query !== false) {
 		    wp_send_json_success( __( 'Thanks, we will call you back as soon as possible!', 'call-me-maybe' ) );
 	    } else {
 		    wp_send_json_error();

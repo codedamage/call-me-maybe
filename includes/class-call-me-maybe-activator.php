@@ -40,7 +40,7 @@ class Call_Me_Maybe_Activator {
           email varchar(255) NOT NULL,
           phone varchar(32) NOT NULL,
           date datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-          updated_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,  
+          created_at datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,  
           PRIMARY KEY  (id)
 	) $charset_collate;";
 

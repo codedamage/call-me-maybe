@@ -21,7 +21,6 @@ class Enquiries_List_Table extends WP_List_Table {
 
 		$this->prepare_items();
 
-		add_action( 'wp_print_scripts', [ __CLASS__, '_list_table_css' ] );
 	}
 
 
@@ -48,32 +47,31 @@ class Enquiries_List_Table extends WP_List_Table {
 			$search = ' WHERE `name` LIKE "%'.$_GET['s'].'%"';
 		}
 		$order = 'DESC';
-		$orderby = 'updated_at';
+		$orderby = 'created_at';
 		if (isset($_GET['order'])){
 			$order = $_GET['order'];
 		}
 		if (isset($_GET['order'])){
 			$orderby = $_GET['orderby'];
 		}
-		// элементы таблицы
 
-		$this->items = $wpdb->get_results( "SELECT * FROM ". $enquiries . " ".$search." ORDER BY `".$orderby."` ".$order." LIMIT " . $per_page . " OFFSET ". $offset . "");
-
+		$this->items = $wpdb->get_results( "SELECT * FROM ". $enquiries . " ".$search." ORDER BY `".$orderby."` ".$order." LIMIT " . $per_page . " OFFSET ". $offset );
 	}
 
 	function get_columns(){
 		return array(
-			'cb'      => '<input type="checkbox" />',
-			'name'    => 'Name',
-			'email'   => 'Email',
-			'phone'   => 'Phone',
-			'date'    => 'Date',
+			'cb'            => '<input type="checkbox" />',
+			'name'          => 'Name',
+			'email'         => 'Email',
+			'phone'         => 'Phone',
+			'date'          => 'Date',
+			'created_at'    => 'Created at',
 		);
 	}
 
 	function get_sortable_columns(){
 		return array(
-			'updated_at' => array( 'updated_at', 'DESC' ),
+			'created_at' => array( 'created_at', 'DESC' ),
 		);
 	}
 
@@ -83,19 +81,21 @@ class Enquiries_List_Table extends WP_List_Table {
 		);
 	}
 
-	static function _list_table_css(){
-		?>
-		<style>
-            table.logs .column-id{ width:2em; }
-            table.logs .column-gclid{ width:8em; }
-            table.logs .column-tag{ width:15%; }
-		</style>
-		<?php
-	}
 
 	function column_default( $item, $colname ){
 
-		return isset($item->$colname) ? $item->$colname : print_r($item, 1);
+		if( $colname === 'phone' ){
+			$actions = array();
+			$actions['edit'] = '<a href="tel:'.$item->phone.'">Call now</a>';
+
+			return $item->$colname . $this->row_actions( $actions );
+		}
+		elseif( $colname === 'date' ){
+			return isset($item->$colname) ? date( 'd.m.Y', strtotime($item->$colname) ) : print_r($item, 1);
+		}
+		else {
+			return isset($item->$colname) ? $item->$colname : print_r($item, 1);
+		}
 
 	}
 
