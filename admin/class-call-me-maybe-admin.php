@@ -52,6 +52,8 @@ class Call_Me_Maybe_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
 		$this->enquiries_admin_nav();
+		add_action( 'wp_ajax_nopriv_send_enquiry', array( $this, 'send_enquiry' ) );
+		add_action( 'wp_ajax_send_enquiry', array( $this, 'send_enquiry' ) );
 
 	}
 
@@ -94,6 +96,36 @@ class Call_Me_Maybe_Admin {
 			<?php
 		}
 	}
+
+    public function send_enquiry() {
+	    $data = $_POST;
+        global $wpdb;
+	    $enquiries = $wpdb->prefix . 'callback_requests';
+	    // check the nonce
+	    check_ajax_referer( 'secure_nonce_cmm', 'security' );
+
+        $name = sanitize_text_field($data['name']);
+	    $email = sanitize_text_field($data['email']);
+	    $phone= sanitize_text_field($data['phone']);
+	    $date = date( 'Y-m-d H:i:s', $data['date'] );
+
+        $query = $wpdb->prepare(
+	        "INSERT INTO $enquiries ( name, email, phone, date ) VALUES ( %s, %s, %s )",
+	        array(
+		        $name,
+		        $email,
+		        $phone,
+		        $date
+	        )
+        );
+
+	    if ( $query) {
+		    $wpdb->query($query);
+		    wp_send_json_success( __( 'Thanks, we will call you back as soon as possible!', 'call-me-maybe' ) );
+	    } else {
+		    wp_send_json_error();
+	    }
+    }
 
 	/**
 	 * Register the stylesheets for the admin area.

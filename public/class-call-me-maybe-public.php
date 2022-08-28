@@ -51,7 +51,51 @@ class Call_Me_Maybe_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		add_shortcode('call_me_maybe', [$this, 'form_shortcode']);
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action ( 'wp_head', array( $this, 'javascript_variables' ) );
 
+	}
+
+	/**
+	 * Create form shortcode.
+	 *
+	 * @since    1.0.0
+	 */
+	public function form_shortcode(){
+		$html = '<form action="" method="post" name="callback_form">
+				    <div class="form-field">    
+				        <label>Name: </label>
+				        <input name="name" type="text" placeholder="Type your name" required>
+				    </div>
+				    <div class="form-field">    
+				        <label>Email: </label>
+				        <input name="email"  type="email" placeholder="Type a valid email" required>
+				    </div>
+				    <div class="form-field">    
+				        <label>Phone: </label>
+				        <input name="phone"  type="text" placeholder="+1 201-926-9775" required>
+				    </div>
+				    <div class="form-field">    
+				        <label>Date: </label>
+				        <input name="date"  type="date" required>
+				    </div>
+				    <input type="hidden" name="action" value="send_enquiry" style="display: none; visibility: hidden; opacity: 0;">
+				    <button class="button" type="submit">Call me back!</button>
+				</form>';
+		return $html;
+	}
+
+	/**
+	 * Create form variables.
+	 *
+	 * @since    1.0.0
+	 */
+	function javascript_variables(){ ?>
+		<script type="text/javascript">
+            var ajax_url = '<?php echo admin_url( "admin-ajax.php" ); ?>';
+            var ajax_nonce = '<?php echo wp_create_nonce( "secure_nonce_cmm" ); ?>';
+		</script><?php
 	}
 
 	/**
@@ -96,8 +140,13 @@ class Call_Me_Maybe_Public {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/call-me-maybe-public.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'call-me-maybe-public', plugin_dir_url( __FILE__ ) . 'js/call-me-maybe-public.js', array( 'jquery' ), null, true );
 
+		// set variables for script
+		wp_localize_script( 'call-me-maybe-public', 'settings', array(
+			'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+			'error'      => __( 'Sorry, something went wrong. Please try again', 'call-me-maybe' )
+		));
 	}
 
 }
